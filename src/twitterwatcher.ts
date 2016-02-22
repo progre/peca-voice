@@ -19,6 +19,12 @@ const KEYWORDS = [
     .concat(HIRAGANA_KEYWORDS)
     .concat(HIRAGANA_KEYWORDS.map(x => jaco.katakanize(x)));
 
+const SCREEN_NAME_BLACK_LIST = [
+    "inatami_bot",
+    "sapioshan",
+    "yukkuri_livech"
+];
+
 export default class TwitterWatcher extends EventEmitter {
     constructor(statusListener?: (status: any) => void) {
         super();
@@ -48,6 +54,9 @@ export default class TwitterWatcher extends EventEmitter {
                 let tweets = await getTweets(client, maxId);
                 maxId = tweets.search_metadata.max_id_str;
                 tweets.statuses.reverse().forEach((status: any) => {
+                    if (!isValid(status)) {
+                        return;
+                    }
                     this.emit("status", status);
                 });
             } catch (e) {
@@ -55,6 +64,18 @@ export default class TwitterWatcher extends EventEmitter {
             }
         }, 60 * 1000);
     }
+}
+
+function isValid(status: any) {
+    let screenName = status.user.screen_name;
+    if (SCREEN_NAME_BLACK_LIST.indexOf(screenName) >= 0) {
+        return false;
+    }
+    if (KEYWORDS.some(x => screenName.indexOf(x) >= 0)
+        && KEYWORDS.every(x => status.text.indexOf(x) < 0)) {
+        return false;
+    }
+    return true;
 }
 
 async function getLatest(client: any) {
