@@ -3,7 +3,7 @@ try { require("source-map-support").install(); } catch (e) { /* empty */ }
 const Gitter = require("node-gitter");
 import * as RequestStatic from "request";
 const request: typeof RequestStatic = require("request");
-import TwitterWatcher from "./twitterwatcher";
+import TwitterWatcher, {KEYWORDS} from "./twitterwatcher";
 import {configure, getLogger} from "log4js";
 configure({
     appenders: [{ type: "console", layout: { type: "basic" } }]
@@ -25,7 +25,10 @@ async function main() {
     let room = await gitter.rooms.join(roomPath);
     let watcher = new TwitterWatcher(async (status) => {
         let url = `https://twitter.com/${status.user.screen_name}/status/${status.id_str}`;
-        let mainText = `[${status.user.screen_name}] ${escapeGitterMarkdown(status.text)}`;
+        let text = status.text;
+        text = escapeGitterMarkdown(text);
+        text = boldifyKeywords(text);
+        let mainText = `[${status.user.screen_name}] ${text}`;
         try {
             let minified = await minifyURL(url);
             room.send(`${mainText} ${minified}`);
@@ -61,9 +64,9 @@ function minifyURL(url: string) {
 
 function escapeGitterMarkdown(text: string) {
     text = text.replace(/\n/g, " ");
-    const BOLD = /\*\*(.+?)\*\*/;
+    const BOLD = /\*\*/;
     while (text.match(BOLD) != null) {
-        text = text.replace(BOLD, "**$1*\uFEFF*");
+        text = text.replace(BOLD, "*\uFEFF*\uFEFF");
     }
     const ITALICS = /\*(.+?)\*/;
     while (text.match(ITALICS) != null) {
@@ -97,6 +100,13 @@ function escapeGitterMarkdown(text: string) {
     while (text.match(CODE) != null) {
         text = text.replace(CODE, "`$1ˋ");
     }
+    return text;
+}
+
+function boldifyKeywords(text: string) {
+    KEYWORDS.forEach(keyword => {
+        text = text.replace(new RegExp(`(${keyword})`, "gi"), "**$1**");
+    });
     return text;
 }
 

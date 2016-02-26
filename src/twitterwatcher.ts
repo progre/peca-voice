@@ -10,7 +10,7 @@ const HIRAGANA_KEYWORDS = [
     `"ぴあかす"`,
     `"ぺかすて"`,
 ];
-const KEYWORDS = [
+export const KEYWORDS = [
     "peercast",
     "peercaststation",
     "pecast",
@@ -22,6 +22,8 @@ const KEYWORDS = [
 const SCREEN_NAME_BLACK_LIST = [
     "inatami_bot",
     "sapioshan",
+    "SKC_nmcm_bot",
+    "tks_kool_bot",
     "yukkuri_livech"
 ];
 
