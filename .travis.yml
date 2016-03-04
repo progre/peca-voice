@@ -1,8 +1,12 @@
-sudo: false
+sudo: required
 language: node_js
 node_js: 5
-cache:
-  directories:
-    - node_modules
+services:
+  - docker
 script:
   - npm run build
+after_success:
+  - product=`test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "gh-pages" && "true"`
+  - test $product == "true" && docker login --email="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - docker build -t progre/sutahigashi .
+  - test $product == "true" && docker push progre/sutahigashi
