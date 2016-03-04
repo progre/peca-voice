@@ -8,7 +8,7 @@ const HIRAGANA_KEYWORDS = [
     `"ぴあきゃす"`,
     `"ぴあきゃすと"`,
     `"ぴあかす"`,
-    `"ぺかすて"`,
+    `"ぺかすて"`
 ];
 export const KEYWORDS = [
     "peercast",

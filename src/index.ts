@@ -104,7 +104,7 @@ function escapeGitterMarkdown(text: string) {
 }
 
 function boldifyKeywords(text: string) {
-    KEYWORDS.forEach(keyword => {
+    KEYWORDS.sort((a, b) => -(a.length - b.length)).forEach(keyword => {
         text = text.replace(new RegExp(`(${keyword})`, "gi"), "**$1**");
     });
     return text;
