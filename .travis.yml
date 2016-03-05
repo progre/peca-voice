@@ -6,7 +6,7 @@ services:
 script:
   - npm run build
 after_success:
-  - export product=`test "$TRAVIS_PULL_REQUEST" == false && test "$TRAVIS_BRANCH" == master && true`
+  - export product=`test "$TRAVIS_PULL_REQUEST" == false && test "$TRAVIS_BRANCH" == master && echo true`
   - test "$product" == true && docker login --email="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
   - docker build -t progre/sutahigashi .
   - test "$product" == true && docker push progre/sutahigashi
