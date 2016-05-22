@@ -83,8 +83,8 @@ function isValid(status: any) {
     if (status.text.indexOf(PECASTARTER_CONSTANT_MESSAGE) === 0) { // 先頭の場合のみマッチ
         return false;
     }
-    if (SEARCH_KEYWORDS.some(x => screenName.indexOf(x) >= 0)
-        && SEARCH_KEYWORDS.every(x => status.text.indexOf(x) < 0)) {
+    if (BOLD_KEYWORDS.some(x => screenName.indexOf(x) >= 0)
+        && BOLD_KEYWORDS.every(x => status.text.indexOf(x) < 0)) {
         return false;
     }
     return true;
