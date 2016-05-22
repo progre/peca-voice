@@ -37,8 +37,12 @@ async function main() {
             room.send(`${mainText} ${url.substring(1)}`);
         }
     });
-    watcher.on("since", (since: Date) => {
-        logger.info(room.send(`Since ${since}.`));
+    watcher.on("since", async (since: Date) => {
+        try {
+            logger.info(await room.send(`Since ${since}.`));
+        } catch (e) {
+            logger.error(e);
+        }
     });
     watcher.watch({
         consumerKey: process.env.TWITTER_CONSUMER_TOKEN,
