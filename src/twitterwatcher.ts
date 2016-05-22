@@ -18,11 +18,11 @@ export const ALPHABET_KEYWORDS = [
     "pecastarter"
 ];
 const SEARCH_KEYWORDS = ALPHABET_KEYWORDS
-    .concat(HIRAGANA_KEYWORDS.map(x => `"$(x)"`))
-    .concat(KATAKANA_KEYWORDS.map(x => `"$(x)"`));
+    .concat(HIRAGANA_KEYWORDS.map(x => `"${x}"`))
+    .concat(KATAKANA_KEYWORDS.map(x => `"${x}"`));
 export const BOLD_KEYWORDS = ALPHABET_KEYWORDS
-    .concat(HIRAGANA_KEYWORDS.map(x => `"$(x)"`))
-    .concat(KATAKANA_KEYWORDS.map(x => `"$(x)"`));
+    .concat(HIRAGANA_KEYWORDS.map(x => `"${x}"`))
+    .concat(KATAKANA_KEYWORDS.map(x => `"${x}"`));
 
 const SCREEN_NAME_BLACK_LIST = [
     "inatami_bot",
