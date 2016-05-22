@@ -3,8 +3,8 @@ try { require("source-map-support").install(); } catch (e) { /* empty */ }
 const Gitter = require("node-gitter");
 import * as RequestStatic from "request";
 const request: typeof RequestStatic = require("request");
-import TwitterWatcher, {KEYWORDS} from "./twitterwatcher";
-import {configure, getLogger} from "log4js";
+import TwitterWatcher, { BOLD_KEYWORDS } from "./twitterwatcher";
+import { configure, getLogger } from "log4js";
 configure({
     appenders: [{ type: "console", layout: { type: "basic" } }]
 });
@@ -64,47 +64,21 @@ function minifyURL(url: string) {
 
 function escapeGitterMarkdown(text: string) {
     text = text.replace(/\n/g, " ");
-    const BOLD = /\*\*/;
-    while (text.match(BOLD) != null) {
-        text = text.replace(BOLD, "*\uFEFF*\uFEFF");
-    }
-    const ITALICS = /\*(.+?)\*/;
-    while (text.match(ITALICS) != null) {
-        text = text.replace(ITALICS, "*$1∗");
-    }
-    const STRIKETHROUGH = /~~(.+?)~~/;
-    while (text.match(STRIKETHROUGH) != null) {
-        text = text.replace(STRIKETHROUGH, "~~$1~\uFEFF∼");
-    }
-    const HEADER = /(^\s*?)#/m;
-    while (text.match(HEADER) != null) {
-        text = text.replace(HEADER, "$1＃");
-    }
-    const ITEM = /(^\s*?)\*(\s+?)/m;
-    while (text.match(ITEM) != null) {
-        text = text.replace(ITEM, "$1∗$2");
-    }
-    const BLOCKQUOTE = /(^\s*?)>/m;
-    while (text.match(BLOCKQUOTE) != null) {
-        text = text.replace(BLOCKQUOTE, "$1＞");
-    }
-    const SOMEBODY = /(^|\s+?)@/m;
-    while (text.match(SOMEBODY) != null) {
-        text = text.replace(SOMEBODY, "$1＠");
-    }
+    text = text.replace(/\*/g, "＊");
+    text = text.replace(/~/g, "〜");
+    text = text.replace(/#/g, "＃");
+    text = text.replace(/>/g, "＞");
+    text = text.replace(/@/g, "＠");
+    text = text.replace(/`/g, "｀");
     const LINK = /\[(.*?)\]\((.*?)\)/;
     while (text.match(LINK) != null) {
         text = text.replace(LINK, "[$1]❨$2❩");
-    }
-    const CODE = /`(.*?)`/;
-    while (text.match(CODE) != null) {
-        text = text.replace(CODE, "`$1ˋ");
     }
     return text;
 }
 
 function boldifyKeywords(text: string) {
-    KEYWORDS.sort((a, b) => -(a.length - b.length)).forEach(keyword => {
+    BOLD_KEYWORDS.sort((a, b) => -(a.length - b.length)).forEach(keyword => {
         text = text.replace(new RegExp(`(${keyword})`, "gi"), "**$1**");
     });
     return text;

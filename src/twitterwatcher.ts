@@ -1,23 +1,28 @@
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 const Twitter = require("twitter");
 const jaco = require("jaco");
-import {getLogger} from "log4js";
+import { getLogger } from "log4js";
 const logger = getLogger();
 
 const HIRAGANA_KEYWORDS = [
-    `"ぴあきゃす"`,
-    `"ぴあきゃすと"`,
-    `"ぴあかす"`,
-    `"ぺかすて"`
+    "ぴあきゃす",
+    "ぴあきゃすと",
+    "ぴあかす",
+    "ぺかすて"
 ];
-export const KEYWORDS = [
+const KATAKANA_KEYWORDS = HIRAGANA_KEYWORDS.map(x => jaco.katakanize(x));
+export const ALPHABET_KEYWORDS = [
     "peercast",
     "peercaststation",
     "pecast",
     "pecastarter"
-]
-    .concat(HIRAGANA_KEYWORDS)
-    .concat(HIRAGANA_KEYWORDS.map(x => jaco.katakanize(x)));
+];
+const SEARCH_KEYWORDS = ALPHABET_KEYWORDS
+    .concat(HIRAGANA_KEYWORDS.map(x => `"$(x)"`))
+    .concat(KATAKANA_KEYWORDS.map(x => `"$(x)"`));
+export const BOLD_KEYWORDS = ALPHABET_KEYWORDS
+    .concat(HIRAGANA_KEYWORDS.map(x => `"$(x)"`))
+    .concat(KATAKANA_KEYWORDS.map(x => `"$(x)"`));
 
 const SCREEN_NAME_BLACK_LIST = [
     "inatami_bot",
@@ -26,6 +31,8 @@ const SCREEN_NAME_BLACK_LIST = [
     "tks_kool_bot",
     "yukkuri_livech"
 ];
+
+const PECASTARTER_CONSTANT_MESSAGE = "PeerCastで配信中！";
 
 export default class TwitterWatcher extends EventEmitter {
     constructor(statusListener?: (status: any) => void) {
@@ -73,8 +80,11 @@ function isValid(status: any) {
     if (SCREEN_NAME_BLACK_LIST.indexOf(screenName) >= 0) {
         return false;
     }
-    if (KEYWORDS.some(x => screenName.indexOf(x) >= 0)
-        && KEYWORDS.every(x => status.text.indexOf(x) < 0)) {
+    if (status.text.indexOf(PECASTARTER_CONSTANT_MESSAGE) === 0) { // 先頭の場合のみマッチ
+        return false;
+    }
+    if (SEARCH_KEYWORDS.some(x => screenName.indexOf(x) >= 0)
+        && SEARCH_KEYWORDS.every(x => status.text.indexOf(x) < 0)) {
         return false;
     }
     return true;
@@ -82,7 +92,7 @@ function isValid(status: any) {
 
 async function getLatest(client: any) {
     let params = {
-        q: KEYWORDS.join(" OR "),
+        q: SEARCH_KEYWORDS.join(" OR "),
         count: 1
     };
     let tweets = await get(client, "search/tweets", params);
@@ -91,7 +101,7 @@ async function getLatest(client: any) {
 
 function getTweets(client: any, sinceId: string) {
     let params = {
-        q: KEYWORDS.join(" OR "),
+        q: SEARCH_KEYWORDS.join(" OR "),
         count: 100,
         since_id: sinceId
     };
