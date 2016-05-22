@@ -82,9 +82,11 @@ function escapeGitterMarkdown(text: string) {
 }
 
 function boldifyKeywords(text: string) {
-    BOLD_KEYWORDS.sort((a, b) => -(a.length - b.length)).forEach(keyword => {
-        text = text.replace(new RegExp(`(${keyword})`, "gi"), "**$1**");
-    });
+    BOLD_KEYWORDS
+        .sort((a, b) => -(a.length - b.length))
+        .forEach(keyword => {
+            text = text.replace(new RegExp(`(${keyword})`, "gi"), "**$1**");
+        });
     return text;
 }
 
