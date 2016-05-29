@@ -70,6 +70,7 @@ function escapeGitterMarkdown(text: string) {
     text = text.replace(/\n/g, " ");
     text = text.replace(/\*/g, "＊");
     text = text.replace(/~/g, "〜");
+    text = text.replace(/_/g, "＿");
     text = text.replace(/#/g, "＃");
     text = text.replace(/>/g, "＞");
     text = text.replace(/@/g, "＠");
@@ -85,7 +86,7 @@ function boldifyKeywords(text: string) {
     BOLD_KEYWORDS
         .sort((a, b) => -(a.length - b.length))
         .forEach(keyword => {
-            text = text.replace(new RegExp(`(${keyword})`, "gi"), "**$1**");
+            text = text.replace(new RegExp(`(?!**)(${keyword})`, "gi"), "**$1**");
         });
     return text;
 }
