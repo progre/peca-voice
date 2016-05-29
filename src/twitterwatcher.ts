@@ -63,6 +63,10 @@ export default class TwitterWatcher extends EventEmitter {
         setInterval(async () => {
             try {
                 let tweets = await getTweets(client, maxId);
+                if (tweets.errors != null) {
+                    logger.error(tweets);
+                    return;
+                }
                 maxId = tweets.search_metadata.max_id_str;
                 tweets.statuses.reverse().forEach((status: any) => {
                     if (!isValid(status)) {
