@@ -8,14 +8,16 @@ const HIRAGANA_KEYWORDS = [
     "ぴあきゃす",
     "ぴあきゃすと",
     "ぴあかす",
-    "ぺかすて"
+    "ぺかすて",
+    "ぺか界隈"
 ];
 const KATAKANA_KEYWORDS = HIRAGANA_KEYWORDS.map(x => jaco.katakanize(x));
 export const ALPHABET_KEYWORDS = [
     "peercast",
     "peercaststation",
     "pecast",
-    "pecastarter"
+    "pecastarter",
+    "peca界隈"
 ];
 const SEARCH_KEYWORDS = ALPHABET_KEYWORDS
     .concat(HIRAGANA_KEYWORDS.map(x => `"${x}"`))
