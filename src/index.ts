@@ -24,17 +24,21 @@ async function main() {
     let gitter = new Gitter(process.env.GITTER_TOKEN);
     let room = await gitter.rooms.join(roomPath);
     let watcher = new TwitterWatcher(async (status) => {
-        let url = `https://twitter.com/${status.user.screen_name}/status/${status.id_str}`;
-        let text = status.text;
-        text = escapeGitterMarkdown(text);
-        text = boldifyKeywords(text);
-        let mainText = `[${status.user.screen_name}] ${text}`;
         try {
-            let minified = await minifyURL(url);
-            room.send(`${mainText} ${minified}`);
+            let url = `https://twitter.com/${status.user.screen_name}/status/${status.id_str}`;
+            let text = status.text;
+            text = escapeGitterMarkdown(text);
+            text = boldifyKeywords(text);
+            let mainText = `[${status.user.screen_name}] ${text}`;
+            try {
+                let minified = await minifyURL(url);
+                room.send(`${mainText} ${minified}`);
+            } catch (e) {
+                logger.error(e.stack != null ? e.stack : e);
+                room.send(`${mainText} ${url.substring(1)}`);
+            }
         } catch (e) {
-            logger.error(e.stack != null ? e.stack : e);
-            room.send(`${mainText} ${url.substring(1)}`);
+            logger.error(e.stack || e);
         }
     });
     watcher.on("since", async (since: Date) => {
