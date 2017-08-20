@@ -30,11 +30,11 @@ http.createServer((req, res) => {
         accessTokenSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET
     };
     let roomPath = process.env.GITTER_ROOM;
-    fs.readFile("maxId", "utf8", async (err, data) => {
+    fs.readFile("/tmp/maxId", "utf8", async (err, data) => {
         if (err) {
             if (err.code === "ENOENT") {
                 const { maxId, since } = await getSince(twitterTokens);
-                fs.writeFile("maxId", maxId);
+                fs.writeFile("/tmp/maxId", maxId);
                 let gitter = new Gitter(gitterToken);
                 let room = await gitter.rooms.join(roomPath);
                 logger.info(await room.send(`Since ${since}.`));
@@ -48,6 +48,8 @@ http.createServer((req, res) => {
         statuses.forEach((status) => {
             postStatus(status, gitterToken, roomPath);
         });
-        fs.writeFile("maxId", maxId);
+        fs.writeFile("/tmp/maxId", maxId);
+        res.statusCode = 200;
+        res.end();
     });
 }).listen(3000);

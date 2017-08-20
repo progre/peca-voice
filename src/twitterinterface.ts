@@ -24,11 +24,13 @@ export const BOLD_KEYWORDS = ALPHABET_KEYWORDS
   .concat(KATAKANA_KEYWORDS);
 
 const SCREEN_NAME_BLACK_LIST = [
+  "aquari_bot",
   "bestyasuhirojp",
   "inatami_bot",
   "sapioshan",
   "skc_anniversary",
   "SKC_nmcm_bot",
+  "Takayasikibot",
   "tks_kool_bot",
   "yukkuri_livech"
 ];
