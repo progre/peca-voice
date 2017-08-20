@@ -44,10 +44,12 @@
     "template"
   ],
   "license": "MIT",
-  "main": "lib/index.js",
+  "main": "lib/serve.js",
   "private": true,
   "repository": "https://github.com/progre/peca-voice.git",
   "scripts": {
+    "start": "node .",
+    "now-build": "",
     "build": "gulp release-build",
     "test": "gulp test:test"
   },
@@ -57,5 +59,8 @@
     "node-gitter": "^1.2.9",
     "request": "^2.69.0",
     "twitter": "^1.2.5"
+  },
+  "engines": {
+    "node": "4.x.x"
   }
 }
