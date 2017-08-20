@@ -38,6 +38,8 @@ http.createServer((req, res) => {
                 let gitter = new Gitter(gitterToken);
                 let room = await gitter.rooms.join(roomPath);
                 logger.info(await room.send(`Since ${since}.`));
+                res.statusCode = 200;
+                res.end();
                 return;
             }
             res.statusCode = 500;
@@ -46,6 +48,7 @@ http.createServer((req, res) => {
         }
         const { maxId, statuses } = await getLatests(twitterTokens, data);
         statuses.forEach((status) => {
+            logger.info("Found. " + JSON.stringify(status));
             postStatus(status, gitterToken, roomPath);
         });
         fs.writeFile("/tmp/maxId", maxId);
