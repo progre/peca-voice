@@ -12,7 +12,7 @@
     "jaco": "^2.1.0-beta",
     "log4js": "^2.3.12",
     "node-gitter": "^2.1.0",
-    "request": "^2.69.0",
+    "request": "^2.83.0",
     "ts-node": "^3.3.0",
     "tslint": "^5.8.0",
     "tslint-language-service": "^0.9.6",
@@ -20,8 +20,8 @@
     "typescript": "^2.6.1"
   },
   "devDependencies": {
-    "@commitlint/cli": "^5.0.1",
-    "@commitlint/config-angular": "^5.0.1",
+    "@commitlint/cli": "^5.1.1",
+    "@commitlint/config-angular": "^5.1.1",
     "@progre/tslint-config": "~5.3.0",
     "husky": "^0.14.3"
   },
