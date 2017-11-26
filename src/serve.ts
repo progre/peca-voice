@@ -1,14 +1,15 @@
+import { configure, getLogger } from 'log4js';
+configure({
+  appenders: { console: { type: 'console', layout: { type: 'basic' } } },
+  categories: { default: { appenders: ['console'], level: 'debug' } },
+});
+const logger = getLogger();
 import * as fs from 'fs';
 import * as http from 'http';
 // tslint:disable-next-line:variable-name
 const Gitter = require('node-gitter');
 import { postStatus } from './gitterinterface';
 import { getLatests, getSince } from './twitterinterface';
-const { configure, getLogger } = require('log4js');
-configure({
-  appenders: [{ type: 'console', layout: { type: 'basic' } }],
-});
-const logger = getLogger();
 
 if (process.env.GITTER_ROOM == null
   || process.env.GITTER_TOKEN == null
@@ -33,7 +34,11 @@ http.createServer((_, res) => {
     if (err) {
       if (err.code === 'ENOENT') {
         const { maxId: maxIdOnFirstTime, since } = await getSince(twitterTokens);
-        fs.writeFile('/tmp/maxId', maxIdOnFirstTime, (err1) => { console.error(err1); });
+        fs.writeFile(
+          '/tmp/maxId',
+          maxIdOnFirstTime,
+          (err1) => { logger.fatal('writeFile failed', err1); },
+        );
         const gitter = new Gitter(gitterToken);
         const room = await gitter.rooms.join(roomPath);
         logger.info(await room.send(`Since ${since}.`));
@@ -48,10 +53,12 @@ http.createServer((_, res) => {
     const { maxId, statuses } = await getLatests(twitterTokens, data);
     statuses.forEach((status) => {
       logger.info(`Found. ${JSON.stringify(status)}`);
-      postStatus(status, gitterToken, roomPath).catch((e) => { console.error(e); });
+      postStatus(status, gitterToken, roomPath)
+        .catch((e) => { logger.fatal('post failed', e); });
     });
-    fs.writeFile('/tmp/maxId', maxId, (e) => { console.error(e); });
+    fs.writeFile('/tmp/maxId', maxId, (e) => { logger.fatal('write failed', e); });
     res.statusCode = 200;
     res.end();
   });
 }).listen(3000);
+logger.info('Listening 3000');

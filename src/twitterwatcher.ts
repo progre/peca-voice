@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-const { getLogger } = require('log4js');
+import { getLogger } from 'log4js';
 const logger = getLogger();
 import { getLatests, getSince } from './twitterinterface';
 

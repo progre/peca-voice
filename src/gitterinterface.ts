@@ -1,4 +1,4 @@
-const { getLogger } = require('log4js');
+import { getLogger } from 'log4js';
 const logger = getLogger();
 // tslint:disable-next-line:variable-name
 const Gitter = require('node-gitter');

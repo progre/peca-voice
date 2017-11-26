@@ -10,7 +10,7 @@
     "@types/node": "^8.0.28",
     "@types/request": "^2.0.8",
     "jaco": "^2.1.0-beta",
-    "log4js": "^0.6.31",
+    "log4js": "^2.3.12",
     "node-gitter": "^1.2.9",
     "request": "^2.69.0",
     "ts-node": "^3.3.0",
