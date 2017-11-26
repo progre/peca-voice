@@ -45,6 +45,7 @@
   },
   "scripts": {
     "commitmsg": "commitlint -e $GIT_PARAMS",
-    "dev": "ts-node --project tsconfig-dev.json src/index.ts"
+    "dev": "ts-node --project tsconfig-dev.json src/index.ts",
+    "start": "ts-node src/index.ts"
   }
 }
