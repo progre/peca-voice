@@ -1,4 +1,4 @@
-const jaco = require('jaco');
+import Jaco from 'jaco';
 // tslint:disable-next-line:variable-name
 const Twitter = require('twitter');
 
@@ -9,7 +9,8 @@ const HIRAGANA_KEYWORDS = [
   'ぺかすて',
   'ぺか界隈',
 ];
-const KATAKANA_KEYWORDS = HIRAGANA_KEYWORDS.map(x => jaco.katakanize(x));
+const KATAKANA_KEYWORDS
+  = HIRAGANA_KEYWORDS.map(x => new Jaco(x).toKatakana().toString());
 export const ALPHABET_KEYWORDS = [
   'peercast',
   'peercaststation',

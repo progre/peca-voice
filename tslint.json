@@ -1,5 +1,8 @@
 {
   "extends": [
     "@progre/tslint-config"
-  ]
+  ],
+  "rules": {
+    "import-name": false
+  }
 }
