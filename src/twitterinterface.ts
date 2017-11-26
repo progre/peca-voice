@@ -26,6 +26,7 @@ export const BOLD_KEYWORDS = ALPHABET_KEYWORDS
   .concat(KATAKANA_KEYWORDS);
 
 const SCREEN_NAME_BLACK_LIST = [
+  'Atarubot',
   'aquari_bot',
   'bestyasuhirojp',
   'inatami_bot',
@@ -38,6 +39,8 @@ const SCREEN_NAME_BLACK_LIST = [
 ];
 
 const PECASTARTER_CONSTANT_MESSAGE = 'PeerCastで配信中！';
+
+const mention = /(^|\W)@?(\w){1,15}$/;
 
 export async function getSince(tokens: any) {
   const client = new Twitter({
@@ -64,7 +67,7 @@ export async function getLatests(tokens: any, currentMaxId: string) {
   if (tweets.errors != null) {
     throw new Error(JSON.stringify(tweets));
   }
-  const maxId = tweets.search_metadata.max_id_str;
+  const maxId: string = tweets.search_metadata.max_id_str;
   return {
     maxId,
     statuses: (<any[]>tweets.statuses)
@@ -73,19 +76,22 @@ export async function getLatests(tokens: any, currentMaxId: string) {
   };
 }
 
-function isValid(status: any) {
-  const screenName = status.user.screen_name;
+function isValid(status: { user: { screen_name: string; }; text: string; }) {
+  const screenName: string = status.user.screen_name;
   if (SCREEN_NAME_BLACK_LIST.indexOf(screenName) >= 0) {
     return false;
   }
   if (status.text.indexOf(PECASTARTER_CONSTANT_MESSAGE) === 0) { // 先頭の場合のみマッチ
     return false;
   }
-  if (BOLD_KEYWORDS.some(x => screenName.indexOf(x) >= 0)
-    && BOLD_KEYWORDS.every(x => status.text.indexOf(x) < 0)) {
+  if (BOLD_KEYWORDS.every(x => !removeMention(status.text).includes(x))) {
     return false;
   }
   return true;
+}
+
+function removeMention(text: string) {
+  return text.replace(mention, '');
 }
 
 async function getLatest(client: any) {

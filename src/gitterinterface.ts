@@ -4,7 +4,7 @@ const logger = getLogger();
 const Gitter = require('node-gitter');
 import * as RequestStatic from 'request';
 const request: typeof RequestStatic = require('request');
-import { BOLD_KEYWORDS } from './twitterinterface';
+// import { BOLD_KEYWORDS } from './twitterinterface';
 
 export async function postSince(since: Date, gitterToken: string, roomPath: string) {
   const gitter = new Gitter(gitterToken);
@@ -18,8 +18,8 @@ export async function postStatus(status: any, gitterToken: string, roomPath: str
   const url = `https://twitter.com/${status.user.screen_name}/status/${status.id_str}`;
   let text = status.text;
   text = escapeGitterMarkdown(text);
-  text = boldifyKeywords(text);
-  const mainText = `[${status.user.screen_name}] ${text}`;
+  // text = boldifyKeywords(text);
+  const mainText = `[${escapeGitterMarkdown(status.user.screen_name)}] ${text}`;
   try {
     const minified = await minifyURL(url);
     room.send(`${mainText} ${minified}`);
@@ -61,12 +61,12 @@ function escapeGitterMarkdown(text: string) {
   // tslint:enable:no-parameter-reassignment
 }
 
-function boldifyKeywords(text: string) {
-  BOLD_KEYWORDS
-    .sort((a, b) => -(a.length - b.length))
-    .forEach((keyword) => {
-      // tslint:disable-next-line:no-parameter-reassignment
-      text = text.replace(new RegExp(`(?!\\*\\*)(${keyword})`, 'gi'), '**$1**');
-    });
-  return text;
-}
+// function boldifyKeywords(text: string) {
+//   BOLD_KEYWORDS
+//     .sort((a, b) => -(a.length - b.length))
+//     .forEach((keyword) => {
+//       // tslint:disable-next-line:no-parameter-reassignment
+//       text = text.replace(new RegExp(`(?!\\*\\*)(${keyword})`, 'gi'), '**$1**');
+//     });
+//   return text;
+// }
