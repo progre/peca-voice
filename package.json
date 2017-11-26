@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@types/node": "^8.0.28",
+    "@types/request": "^2.0.8",
     "jaco": "^1.2.1",
     "log4js": "^0.6.31",
     "node-gitter": "^1.2.9",

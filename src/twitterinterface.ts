@@ -1,20 +1,21 @@
-const jaco = require("jaco");
-const Twitter = require("twitter");
+const jaco = require('jaco');
+// tslint:disable-next-line:variable-name
+const Twitter = require('twitter');
 
 const HIRAGANA_KEYWORDS = [
-  "ぴあきゃす",
-  "ぴあきゃすと",
-  "ぴあかす",
-  "ぺかすて",
-  "ぺか界隈"
+  'ぴあきゃす',
+  'ぴあきゃすと',
+  'ぴあかす',
+  'ぺかすて',
+  'ぺか界隈',
 ];
 const KATAKANA_KEYWORDS = HIRAGANA_KEYWORDS.map(x => jaco.katakanize(x));
 export const ALPHABET_KEYWORDS = [
-  "peercast",
-  "peercaststation",
-  "pecast",
-  "pecastarter",
-  "peca界隈"
+  'peercast',
+  'peercaststation',
+  'pecast',
+  'pecastarter',
+  'peca界隈',
 ];
 const SEARCH_KEYWORDS = ALPHABET_KEYWORDS
   .concat(HIRAGANA_KEYWORDS.map(x => `"${x}"`))
@@ -24,41 +25,41 @@ export const BOLD_KEYWORDS = ALPHABET_KEYWORDS
   .concat(KATAKANA_KEYWORDS);
 
 const SCREEN_NAME_BLACK_LIST = [
-  "aquari_bot",
-  "bestyasuhirojp",
-  "inatami_bot",
-  "sapioshan",
-  "skc_anniversary",
-  "SKC_nmcm_bot",
-  "Takayasikibot",
-  "tks_kool_bot",
-  "yukkuri_livech"
+  'aquari_bot',
+  'bestyasuhirojp',
+  'inatami_bot',
+  'sapioshan',
+  'skc_anniversary',
+  'SKC_nmcm_bot',
+  'Takayasikibot',
+  'tks_kool_bot',
+  'yukkuri_livech',
 ];
 
-const PECASTARTER_CONSTANT_MESSAGE = "PeerCastで配信中！";
+const PECASTARTER_CONSTANT_MESSAGE = 'PeerCastで配信中！';
 
 export async function getSince(tokens: any) {
-  let client = new Twitter({
+  const client = new Twitter({
     consumer_key: tokens.consumerKey,
     consumer_secret: tokens.consumerSecret,
     access_token_key: tokens.accessTokenKey,
-    access_token_secret: tokens.accessTokenSecret
+    access_token_secret: tokens.accessTokenSecret,
   });
-  let latest = await getLatest(client);
+  const latest = await getLatest(client);
   return {
     maxId: latest.id_str,
-    since: new Date(latest.created_at)
+    since: new Date(latest.created_at),
   };
 }
 
 export async function getLatests(tokens: any, currentMaxId: string) {
-  let client = new Twitter({
+  const client = new Twitter({
     consumer_key: tokens.consumerKey,
     consumer_secret: tokens.consumerSecret,
     access_token_key: tokens.accessTokenKey,
-    access_token_secret: tokens.accessTokenSecret
+    access_token_secret: tokens.accessTokenSecret,
   });
-  let tweets = await getTweets(client, currentMaxId);
+  const tweets = await getTweets(client, currentMaxId);
   if (tweets.errors != null) {
     throw new Error(JSON.stringify(tweets));
   }
@@ -67,12 +68,12 @@ export async function getLatests(tokens: any, currentMaxId: string) {
     maxId,
     statuses: (<any[]>tweets.statuses)
       .reverse()
-      .filter(status => isValid(status))
+      .filter(isValid),
   };
 }
 
 function isValid(status: any) {
-  let screenName = status.user.screen_name;
+  const screenName = status.user.screen_name;
   if (SCREEN_NAME_BLACK_LIST.indexOf(screenName) >= 0) {
     return false;
   }
@@ -87,26 +88,26 @@ function isValid(status: any) {
 }
 
 async function getLatest(client: any) {
-  let params = {
-    q: SEARCH_KEYWORDS.join(" OR "),
-    count: 1
+  const params = {
+    q: SEARCH_KEYWORDS.join(' OR '),
+    count: 1,
   };
-  let tweets = await get(client, "search/tweets", params);
+  const tweets = await get(client, 'search/tweets', params);
   return tweets.statuses[0];
 }
 
-function getTweets(client: any, sinceId: string) {
-  let params = {
-    q: SEARCH_KEYWORDS.join(" OR "),
+async function getTweets(client: any, sinceId: string) {
+  const params = {
+    q: SEARCH_KEYWORDS.join(' OR '),
     count: 100,
-    since_id: sinceId
+    since_id: sinceId,
   };
-  return get(client, "search/tweets", params);
+  return get(client, 'search/tweets', params);
 }
 
-function get(client: any, path: string, params: any) {
+async function get(client: any, path: string, params: any) {
   return new Promise<any>((resolve, reject) => {
-    client.get(path, params, (e: any, tweets: any, response: any) => {
+    client.get(path, params, (e: any, tweets: any, _: any) => {
       if (e != null) {
         reject(e);
         return;
