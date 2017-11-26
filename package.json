@@ -11,7 +11,7 @@
     "@types/request": "^2.0.8",
     "jaco": "^2.1.0-beta",
     "log4js": "^2.3.12",
-    "node-gitter": "^1.2.9",
+    "node-gitter": "^2.1.0",
     "request": "^2.69.0",
     "ts-node": "^3.3.0",
     "tslint": "^5.8.0",

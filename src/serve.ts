@@ -34,11 +34,11 @@ http.createServer((_, res) => {
     if (err) {
       if (err.code === 'ENOENT') {
         const { maxId: maxIdOnFirstTime, since } = await getSince(twitterTokens);
-        fs.writeFile(
-          '/tmp/maxId',
-          maxIdOnFirstTime,
-          (err1) => { logger.fatal('writeFile failed', err1); },
-        );
+        fs.writeFile('/tmp/maxId', maxIdOnFirstTime, (err1) => {
+          if (err1 != null) {
+            logger.fatal('writeFile failed', err1);
+          }
+        });
         const gitter = new Gitter(gitterToken);
         const room = await gitter.rooms.join(roomPath);
         logger.info(await room.send(`Since ${since}.`));
@@ -56,7 +56,11 @@ http.createServer((_, res) => {
       postStatus(status, gitterToken, roomPath)
         .catch((e) => { logger.fatal('post failed', e); });
     });
-    fs.writeFile('/tmp/maxId', maxId, (e) => { logger.fatal('write failed', e); });
+    fs.writeFile('/tmp/maxId', maxId, (e) => {
+      if (e != null) {
+        logger.fatal('write failed', e);
+      }
+    });
     res.statusCode = 200;
     res.end();
   });
