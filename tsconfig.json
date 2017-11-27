@@ -1,12 +1,18 @@
 {
-    "compilerOptions": {
-        "noImplicitAny": true,
-        "noEmitOnError": true,
-        "target": "es6"
-    },
-    "exclude": [
-        "lib",
-        "node_modules",
-        "typings"
-    ]
+  "compilerOptions": {
+    "moduleResolution": "Node",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "plugins": [
+      {
+        "name": "tslint-language-service"
+      }
+    ],
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "es2017"
+  },
+  "exclude": [
+    "node_modules"
+  ]
 }

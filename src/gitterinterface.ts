@@ -1,26 +1,27 @@
-import { getLogger } from "log4js";
+import { getLogger } from 'log4js';
 const logger = getLogger();
-const Gitter = require("node-gitter");
-import * as RequestStatic from "request";
-const request: typeof RequestStatic = require("request");
-import { BOLD_KEYWORDS } from "./twitterinterface";
+// tslint:disable-next-line:variable-name
+const Gitter = require('node-gitter');
+import * as RequestStatic from 'request';
+const request: typeof RequestStatic = require('request');
+// import { BOLD_KEYWORDS } from './twitterinterface';
 
 export async function postSince(since: Date, gitterToken: string, roomPath: string) {
-  let gitter = new Gitter(gitterToken);
-  let room = await gitter.rooms.join(roomPath);
+  const gitter = new Gitter(gitterToken);
+  const room = await gitter.rooms.join(roomPath);
   logger.info(await room.send(`Since ${since}.`));
 }
 
 export async function postStatus(status: any, gitterToken: string, roomPath: string) {
-  let gitter = new Gitter(gitterToken);
-  let room = await gitter.rooms.join(roomPath);
-  let url = `https://twitter.com/${status.user.screen_name}/status/${status.id_str}`;
+  const gitter = new Gitter(gitterToken);
+  const room = await gitter.rooms.join(roomPath);
+  const url = `https://twitter.com/${status.user.screen_name}/status/${status.id_str}`;
   let text = status.text;
   text = escapeGitterMarkdown(text);
-  text = boldifyKeywords(text);
-  let mainText = `[${status.user.screen_name}] ${text}`;
+  // text = boldifyKeywords(text);
+  const mainText = `[${escapeGitterMarkdown(status.user.screen_name)}] ${text}`;
   try {
-    let minified = await minifyURL(url);
+    const minified = await minifyURL(url);
     room.send(`${mainText} ${minified}`);
   } catch (e) {
     logger.error(e.stack != null ? e.stack : e);
@@ -28,11 +29,11 @@ export async function postStatus(status: any, gitterToken: string, roomPath: str
   }
 }
 
-function minifyURL(url: string) {
-  return new Promise((resolve, reject) => {
+async function minifyURL(url: string) {
+  return new Promise<string>((resolve, reject) => {
     request(
       `https://is.gd/create.php?format=simple&url=${encodeURIComponent(url)}`,
-      (err, result, body) => {
+      (err, _, body) => {
         if (err != null) {
           reject(err);
           return;
@@ -43,26 +44,29 @@ function minifyURL(url: string) {
 }
 
 function escapeGitterMarkdown(text: string) {
-  text = text.replace(/\n/g, " ");
-  text = text.replace(/\*/g, "＊");
-  text = text.replace(/~/g, "〜");
-  text = text.replace(/_/g, "＿");
-  text = text.replace(/#/g, "＃");
-  text = text.replace(/>/g, "＞");
-  text = text.replace(/@/g, "＠");
-  text = text.replace(/`/g, "｀");
+  // tslint:disable:no-parameter-reassignment
+  text = text.replace(/\n/g, ' ');
+  text = text.replace(/\*/g, '＊');
+  text = text.replace(/~/g, '〜');
+  text = text.replace(/_/g, '＿');
+  text = text.replace(/#/g, '＃');
+  text = text.replace(/>/g, '＞');
+  text = text.replace(/@/g, '＠');
+  text = text.replace(/`/g, '｀');
   const LINK = /\[(.*?)\]\((.*?)\)/;
   while (text.match(LINK) != null) {
-    text = text.replace(LINK, "[$1]❨$2❩");
+    text = text.replace(LINK, '[$1]❨$2❩');
   }
   return text;
+  // tslint:enable:no-parameter-reassignment
 }
 
-function boldifyKeywords(text: string) {
-  BOLD_KEYWORDS
-    .sort((a, b) => -(a.length - b.length))
-    .forEach(keyword => {
-      text = text.replace(new RegExp(`(?!\\*\\*)(${keyword})`, "gi"), "**$1**");
-    });
-  return text;
-}
+// function boldifyKeywords(text: string) {
+//   BOLD_KEYWORDS
+//     .sort((a, b) => -(a.length - b.length))
+//     .forEach((keyword) => {
+//       // tslint:disable-next-line:no-parameter-reassignment
+//       text = text.replace(new RegExp(`(?!\\*\\*)(${keyword})`, 'gi'), '**$1**');
+//     });
+//   return text;
+// }
