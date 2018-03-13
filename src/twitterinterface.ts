@@ -84,7 +84,8 @@ function isValid(status: { user: { screen_name: string; }; text: string; }) {
   if (status.text.indexOf(PECASTARTER_CONSTANT_MESSAGE) === 0) { // 先頭の場合のみマッチ
     return false;
   }
-  if (BOLD_KEYWORDS.every(x => !removeMention(status.text).includes(x))) {
+  // i: 大文字小文字を無視
+  if (BOLD_KEYWORDS.every(x => !removeMention(status.text).match(new RegExp(x, 'i')))) {
     return false;
   }
   return true;
